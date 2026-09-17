@@ -69,6 +69,8 @@
 #define EVSE_CONFIG_OVE_R37_RECONNECT_WAIT_POS 25
 #define EVSE_CONFIG_OVE_R37_START_DELAY_POS    26
 #define EVSE_CONFIG_MAGIC9_POS                 27
+#define EVSE_CONFIG_MAGIC10_POS                28
+#define EVSE_CONFIG_PLUG_LOCK_ENABLED_POS      29
 #define EVSE_CONFIG_SLOT_DEFAULT_POS           48
 
 typedef struct {
@@ -86,6 +88,7 @@ typedef struct {
 #define EVSE_CONFIG_MAGIC7              0x92345678
 #define EVSE_CONFIG_MAGIC8              0x23456742
 #define EVSE_CONFIG_MAGIC9              0x34567893
+#define EVSE_CONFIG_MAGIC10             0x45678934
 #define EVSE_CONFIG_SLOT_MAGIC          0x62870616
 
 #define EVSE_STORAGE_PAGES              16

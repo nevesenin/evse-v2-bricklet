@@ -48,6 +48,7 @@
 #include "eichrecht.h"
 #include "plc.h"
 #include "ove_r37.h"
+#include "plug_lock.h"
 #include "iskra_display.h"
 
 #define LOW_LEVEL_PASSWORD 0x4223B00B
@@ -133,6 +134,10 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 		case FID_GET_ENERGY_METER_DISPLAY_TEXT:         return length != sizeof(GetEnergyMeterDisplayText)        ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : get_energy_meter_display_text(message, response);
 		case FID_SET_ENERGY_METER_DISPLAY_BACKLIGHT:    return length != sizeof(SetEnergyMeterDisplayBacklight)   ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : set_energy_meter_display_backlight(message);
 		case FID_GET_ENERGY_METER_DISPLAY_BACKLIGHT:    return length != sizeof(GetEnergyMeterDisplayBacklight)   ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : get_energy_meter_display_backlight(message, response);
+		case FID_SET_PLUG_LOCK_CONFIGURATION:           return length != sizeof(SetPlugLockConfiguration)         ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : set_plug_lock_configuration(message);
+		case FID_GET_PLUG_LOCK_CONFIGURATION:           return length != sizeof(GetPlugLockConfiguration)         ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : get_plug_lock_configuration(message, response);
+		case FID_SET_PLUG_LOCK_HARDWARE_STATE:          return length != sizeof(SetPlugLockHardwareState)         ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : set_plug_lock_hardware_state(message);
+		case FID_GET_PLUG_LOCK_STATE:                   return length != sizeof(GetPlugLockState)                 ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : get_plug_lock_state(message, response);
 		default: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
 	}
 }
@@ -1351,6 +1356,102 @@ BootloaderHandleMessageResponse set_energy_meter_display_backlight(const SetEner
 BootloaderHandleMessageResponse get_energy_meter_display_backlight(const GetEnergyMeterDisplayBacklight *data, GetEnergyMeterDisplayBacklight_Response *response) {
 	response->header.length = sizeof(GetEnergyMeterDisplayBacklight_Response);
 	response->backlight     = iskra_display.backlight_mode;
+
+	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
+}
+
+BootloaderHandleMessageResponse set_plug_lock_configuration(const SetPlugLockConfiguration *data) {
+	// The plug lock can only be enabled while the ESP32 is asserting a verified harness
+	// loop. Without it we can neither lock the plug nor tell whether it is locked, so
+	// enabling would only ever produce a fault. This also keeps "enabled but no hardware"
+	// unreachable as a fresh state: it can only mean that hardware which was proven there
+	// is now gone, which is why it is treated as a failure.
+	if(data->enabled && !plug_lock_dedication_is_currently_verified()) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	// And not while the contactor is closed. The lock cannot be confirmed closed at the
+	// instant the feature is switched on, so the mid-session fault term would fire on
+	// the next tick and drop the running session into an error state that needs a
+	// disconnect to clear. Wait until charging has stopped.
+	if(data->enabled && plug_lock_enable_is_blocked()) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	// The mirror image of the guard above, and just as load-bearing. Disabling while the
+	// lock hardware is still fitted would leave a socket outlet that energizes with a
+	// removable plug - the exact hazard this module exists to prevent. So the user has to
+	// unplug both bricklets, with the enclosure open and de-energized.
+	//
+	// Deliberately gated on discovery rather than on the harness loop: a failed lock
+	// supply de-asserts the loop with both bricklets still fitted, and a blown fuse must
+	// not be able to open this path. See plug_lock.h.
+	if(!data->enabled && plug_lock_disable_is_blocked()) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	if(plug_lock.enabled != data->enabled) {
+		plug_lock.enabled = data->enabled;
+
+		evse_save_config();
+	}
+
+	return HANDLE_MESSAGE_RESPONSE_EMPTY;
+}
+
+BootloaderHandleMessageResponse get_plug_lock_configuration(const GetPlugLockConfiguration *data, GetPlugLockConfiguration_Response *response) {
+	response->header.length = sizeof(GetPlugLockConfiguration_Response);
+	response->enabled       = plug_lock.enabled;
+
+	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
+}
+
+BootloaderHandleMessageResponse set_plug_lock_hardware_state(const SetPlugLockHardwareState *data) {
+	// This doubles as the heartbeat: it delivers the verdict and refreshes the timestamp
+	// that plug_lock_dedication_is_currently_verified() checks.
+	// `bricklet_dedication_verified` is the ESP32's harness loop verdict, not device
+	// discovery - see the comment on PlugLock::bricklet_dedication_verified. The ESP32
+	// withholds this message entirely while it has no verdict yet, so an unproven harness
+	// is communicated by silence rather than by an asserted false.
+	plug_lock.bricklet_dedication_verified = data->bricklet_dedication_verified;
+	plug_lock.bricklets_not_found          = data->bricklets_not_found;
+	plug_lock.lock_closed                  = data->lock_closed;
+	plug_lock.report_time                  = system_timer_get_ms();
+
+	// An asserted field like the ones above, deliberately not a one-shot: the last value
+	// asserted stands for the whole of the ESP32's absence, and the instance that comes
+	// back clears it by asserting false in its first report. Nothing has to latch it,
+	// time it or detect an edge. See plug_lock_shutdown_is_requested().
+	// Both claims are edge-stamped for the same reason: each is believed only for a
+	// bounded while, and that while has to run from when the claim started rather than
+	// from the last report, or an ESP32 that keeps repeating itself would keep renewing it.
+	if(data->shutting_down && !plug_lock.shutdown_requested) {
+		plug_lock.shutdown_claim_time = system_timer_get_ms();
+	}
+
+	plug_lock.shutdown_requested = data->shutting_down;
+
+	if(data->still_starting_up && !plug_lock.esp32_still_starting_up) {
+		plug_lock.startup_claim_time = system_timer_get_ms();
+	}
+
+	plug_lock.esp32_still_starting_up = data->still_starting_up;
+
+	// Latching, so a single report cannot clear a fault the ESP32 is still in. It is
+	// cleared together with the backstop timeout when lock_wanted goes false, i.e. when
+	// the user disconnects. Note this is a *lock* failure only; a failed unlock leaves
+	// the plug stuck in the safe state and must never block charging.
+	if(data->lock_fault) {
+		plug_lock.lock_fault = true;
+	}
+
+	return HANDLE_MESSAGE_RESPONSE_EMPTY;
+}
+
+BootloaderHandleMessageResponse get_plug_lock_state(const GetPlugLockState *data, GetPlugLockState_Response *response) {
+	response->header.length = sizeof(GetPlugLockState_Response);
+	response->state         = plug_lock.state;
+	response->lock_wanted   = plug_lock.lock_wanted;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }

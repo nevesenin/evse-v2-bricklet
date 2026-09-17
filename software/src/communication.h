@@ -70,6 +70,7 @@ void communication_init(void);
 #define EVSE_V2_ERROR_STATE_DC_FAULT 3
 #define EVSE_V2_ERROR_STATE_CONTACTOR 4
 #define EVSE_V2_ERROR_STATE_COMMUNICATION 5
+#define EVSE_V2_ERROR_STATE_PLUG_LOCK 6
 
 #define EVSE_V2_JUMPER_CONFIGURATION_6A 0
 #define EVSE_V2_JUMPER_CONFIGURATION_10A 1
@@ -371,6 +372,10 @@ void communication_init(void);
 #define FID_GET_ENERGY_METER_DISPLAY_TEXT 75
 #define FID_SET_ENERGY_METER_DISPLAY_BACKLIGHT 76
 #define FID_GET_ENERGY_METER_DISPLAY_BACKLIGHT 77
+#define FID_SET_PLUG_LOCK_CONFIGURATION 78
+#define FID_GET_PLUG_LOCK_CONFIGURATION 79
+#define FID_SET_PLUG_LOCK_HARDWARE_STATE 80
+#define FID_GET_PLUG_LOCK_STATE 81
 
 #define FID_CALLBACK_ENERGY_METER_VALUES 45
 #define FID_CALLBACK_EICHRECHT_DATASET_LOW_LEVEL 59
@@ -1108,6 +1113,40 @@ typedef struct {
 	uint8_t backlight;
 } __attribute__((__packed__)) GetEnergyMeterDisplayBacklight_Response;
 
+typedef struct {
+	TFPMessageHeader header;
+	bool enabled;
+} __attribute__((__packed__)) SetPlugLockConfiguration;
+
+typedef struct {
+	TFPMessageHeader header;
+} __attribute__((__packed__)) GetPlugLockConfiguration;
+
+typedef struct {
+	TFPMessageHeader header;
+	bool enabled;
+} __attribute__((__packed__)) GetPlugLockConfiguration_Response;
+
+typedef struct {
+	TFPMessageHeader header;
+	bool bricklet_dedication_verified;
+	bool bricklets_not_found;
+	bool lock_closed;
+	bool lock_fault;
+	bool shutting_down;
+	bool still_starting_up;
+} __attribute__((__packed__)) SetPlugLockHardwareState;
+
+typedef struct {
+	TFPMessageHeader header;
+} __attribute__((__packed__)) GetPlugLockState;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t state;
+	bool lock_wanted;
+} __attribute__((__packed__)) GetPlugLockState_Response;
+
 
 
 // Function prototypes
@@ -1185,6 +1224,10 @@ BootloaderHandleMessageResponse set_energy_meter_display_text(const SetEnergyMet
 BootloaderHandleMessageResponse get_energy_meter_display_text(const GetEnergyMeterDisplayText *data, GetEnergyMeterDisplayText_Response *response);
 BootloaderHandleMessageResponse set_energy_meter_display_backlight(const SetEnergyMeterDisplayBacklight *data);
 BootloaderHandleMessageResponse get_energy_meter_display_backlight(const GetEnergyMeterDisplayBacklight *data, GetEnergyMeterDisplayBacklight_Response *response);
+BootloaderHandleMessageResponse set_plug_lock_configuration(const SetPlugLockConfiguration *data);
+BootloaderHandleMessageResponse get_plug_lock_configuration(const GetPlugLockConfiguration *data, GetPlugLockConfiguration_Response *response);
+BootloaderHandleMessageResponse set_plug_lock_hardware_state(const SetPlugLockHardwareState *data);
+BootloaderHandleMessageResponse get_plug_lock_state(const GetPlugLockState *data, GetPlugLockState_Response *response);
 
 // Callbacks
 bool handle_energy_meter_values_callback(void);

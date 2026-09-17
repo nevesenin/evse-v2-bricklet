@@ -35,6 +35,7 @@
 #include "adc.h"
 #include "iec61851.h"
 #include "lock.h"
+#include "plug_lock.h"
 #include "led.h"
 #include "dc_fault.h"
 #include "communication.h"
@@ -82,6 +83,17 @@ void evse_set_output(const float cp_duty_cycle, const bool contactor) {
 		}
 	}
 #endif
+
+	// Same shape as the block above, for the bricklet-driven plug lock: refuse to
+	// energize until the ESP32 confirms the plug is locked. There is nothing to start
+	// here - plug_lock_tick() already publishes lock_wanted and the ESP32 polls it.
+	//
+	// This check MUST stay inside `if(contactor)`. De-energizing must never be blocked:
+	// iec61851_state_ef() drops the contactor through evse_set_output(1000, false), so
+	// letting a lock problem block that would turn the safety argument upside down.
+	if(contactor && plug_lock_contactor_close_is_blocked()) {
+		return;
+	}
 
 	if(((bool)!XMC_GPIO_GetInput(EVSE_CONTACTOR_PIN)) != contactor) {
 		if(((cp_duty_cycle == 0) || (cp_duty_cycle == 1000)) && (!contactor) && (last_resistance_counter_off_on == 0) && (last_resistance_counter_on_off == 0)) {
@@ -269,6 +281,10 @@ void evse_load_config(void) {
 		ove_r37.reconnect_wait_s          = page[EVSE_CONFIG_OVE_R37_RECONNECT_WAIT_POS];
 	}
 
+	if(page[EVSE_CONFIG_MAGIC10_POS] == EVSE_CONFIG_MAGIC10) {
+		plug_lock.enabled = page[EVSE_CONFIG_PLUG_LOCK_ENABLED_POS];
+	}
+
 	// Handle charging slot defaults
 	EVSEChargingSlotDefault *slot_default = (EVSEChargingSlotDefault *)(&page[EVSE_CONFIG_SLOT_DEFAULT_POS]);
 	if(slot_default->magic == EVSE_CONFIG_SLOT_MAGIC) {
@@ -365,6 +381,9 @@ void evse_save_config(void) {
 	page[EVSE_CONFIG_OVE_R37_UV_OBSERVE_POS]     = ove_r37.undervoltage_observe_ms;
 	page[EVSE_CONFIG_OVE_R37_RECONNECT_WAIT_POS] = ove_r37.reconnect_wait_s;
 	page[EVSE_CONFIG_OVE_R37_START_DELAY_POS]    = 0;
+
+	page[EVSE_CONFIG_MAGIC10_POS]            = EVSE_CONFIG_MAGIC10;
+	page[EVSE_CONFIG_PLUG_LOCK_ENABLED_POS]  = plug_lock.enabled;
 
 	// Handle charging slot defaults
 	EVSEChargingSlotDefault *slot_default = (EVSEChargingSlotDefault *)(&page[EVSE_CONFIG_SLOT_DEFAULT_POS]);

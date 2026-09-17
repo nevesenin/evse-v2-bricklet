@@ -33,6 +33,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/adc.c"
 	"${PROJECT_SOURCE_DIR}/src/iec61851.c"
 	"${PROJECT_SOURCE_DIR}/src/lock.c"
+	"${PROJECT_SOURCE_DIR}/src/plug_lock.c"
 	"${PROJECT_SOURCE_DIR}/src/led.c"
 	"${PROJECT_SOURCE_DIR}/src/button.c"
 	"${PROJECT_SOURCE_DIR}/src/dc_fault.c"

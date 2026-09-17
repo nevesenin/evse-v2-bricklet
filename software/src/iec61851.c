@@ -32,6 +32,7 @@
 #include "adc.h"
 #include "iec61851.h"
 #include "lock.h"
+#include "plug_lock.h"
 #include "evse.h"
 #include "led.h"
 #include "button.h"
@@ -484,6 +485,13 @@ void iec61851_tick(void) {
 		// We don't allow the jumper to be unconfigured
 		led_set_blinking(2);
 		iec61851_set_state(IEC61851_STATE_EF);
+	} else if(plug_lock_has_fault()) {
+		// The plug lock is enabled but the ESP32 is not asserting that the hardware is
+		// there. We can neither lock the plug nor tell whether it is locked, so we must
+		// not energize. Deliberately ranked below the electrical faults above: this is a
+		// configuration/integrity problem, not an imminent electrical hazard.
+		led_set_blinking(6);
+		iec61851_set_state(IEC61851_STATE_EF);
 	// For diode error check if
 	// * We are in state B or C
 	// * We have seen a negative voltage measurement
@@ -568,7 +576,18 @@ void iec61851_tick(void) {
 			} else if(adc_result.cp_pe_resistance > iec61851_get_cp_resistance_threshold(IEC61851_STATE_B)) {
 				iec61851_set_state(IEC61851_STATE_B);
 			} else if(adc_result.cp_pe_resistance > iec61851_get_cp_resistance_threshold(IEC61851_STATE_C)) {
-				if(charging_slot_get_max_current() == 0) {
+				// The plug lock term is deliberately here and not in the charging slots.
+				// The slots are a current-limit arbitration table with named, documented
+				// entries that the ESP32 reads back; an unnamed limit hidden behind them
+				// would make evse/slots disagree with what the charger actually allows.
+				// This is not a limit at all - it is "do not start a session", which is
+				// what state B already means, so it belongs in the same decision that
+				// zero allowed current feeds.
+				//
+				// It is also deliberately not in the fault chain above: an ESP32 that is
+				// restarting on purpose is not a failure, and EF would both claim one and
+				// pull the supply out from under the car rather than telling it to stop.
+				if((charging_slot_get_max_current() == 0) || plug_lock_shutdown_is_requested()) {
 					iec61851_set_state(IEC61851_STATE_B);
 				} else {
 					iec61851_set_state(IEC61851_STATE_C);

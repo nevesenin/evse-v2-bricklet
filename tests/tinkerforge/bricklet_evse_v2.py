@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2024-03-22.      #
+# This file was automatically generated on 2026-08-29.      #
 #                                                           #
-# Python Bindings Version 2.1.31                            #
+# Python Bindings Version 2.1.32                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -23,24 +21,34 @@ except (ValueError, ImportError):
 
 GetState = namedtuple('State', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type'])
-GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'charging_time', 'time_since_state_change', 'time_since_dc_fault_check', 'uptime'])
+GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'car_stopped_charging', 'time_since_state_change', 'time_since_dc_fault_check', 'uptime'])
 GetChargingSlot = namedtuple('ChargingSlot', ['max_current', 'active', 'clear_on_disconnect'])
 GetAllChargingSlots = namedtuple('AllChargingSlots', ['max_current', 'active_and_clear_on_disconnect'])
 GetChargingSlotDefault = namedtuple('ChargingSlotDefault', ['max_current', 'active', 'clear_on_disconnect'])
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'current', 'phases_active', 'phases_connected'])
-GetAllEnergyMeterValuesLowLevel = namedtuple('AllEnergyMeterValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
+GetAllEnergyMeterValuesLowLevel = namedtuple('AllEnergyMeterValuesLowLevel', ['values_length', 'values_chunk_offset', 'values_chunk_data'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['shutdown_input_configuration', 'input_configuration', 'output_configuration'])
 GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration', 'color_h', 'color_s', 'color_v'])
 GetButtonState = namedtuple('ButtonState', ['button_press_time', 'button_release_time', 'button_pressed'])
 GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state', 'jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type', 'power', 'current', 'phases_active', 'phases_connected', 'error_count'])
-GetAllData2 = namedtuple('AllData2', ['shutdown_input_configuration', 'input_configuration', 'output_configuration', 'indication', 'duration', 'color_h', 'color_s', 'color_v', 'button_configuration', 'button_press_time', 'button_release_time', 'button_pressed', 'ev_wakeup_enabled', 'control_pilot_disconnect', 'boost_mode_enabled', 'temperature', 'phases_current', 'phases_requested', 'phases_state', 'phases_info', 'phase_auto_switch_enabled', 'phases_connected'])
+GetAllData2 = namedtuple('AllData2', ['shutdown_input_configuration', 'input_configuration', 'output_configuration', 'indication', 'duration', 'color_h', 'color_s', 'color_v', 'button_configuration', 'button_press_time', 'button_release_time', 'button_pressed', 'ev_wakeup_enabled', 'control_pilot_disconnect', 'boost_mode_enabled', 'temperature', 'phases_current', 'phases_requested', 'phases_state', 'phases_info', 'phase_auto_switch_enabled', 'phases_connected', 'enumerate_value', 'enumerate_value_change_time', 'phase_switch_wait_time', 'plc_modem_enabled', 'ove_r37_state', 'ove_r37_trip_reason', 'ove_r37_flags', 'energy_meter_display_backlight'])
 GetPhaseControl = namedtuple('PhaseControl', ['phases_current', 'phases_requested', 'phases_state', 'phases_info'])
+GetChargingProtocol = namedtuple('ChargingProtocol', ['charging_protocol', 'cp_duty_cycle'])
+GetEichrechtUserAssignment = namedtuple('EichrechtUserAssignment', ['identification_status', 'identification_flags', 'identification_type', 'identification_data'])
+GetEichrechtChargePoint = namedtuple('EichrechtChargePoint', ['identification_type', 'identification'])
+GetEichrechtTransactionState = namedtuple('EichrechtTransactionState', ['transaction', 'transaction_state', 'transaction_inner_state', 'measurement_status', 'signature_status', 'eichrecht_state'])
+GetEnumerateConfiguration = namedtuple('EnumerateConfiguration', ['enumerator_h', 'enumerator_s', 'enumerator_v'])
+GetEnumerateValue = namedtuple('EnumerateValue', ['value', 'value_change_time'])
+GetOVER37Configuration = namedtuple('OVER37Configuration', ['enabled', 'undervoltage_threshold', 'undervoltage_observation_time', 'reconnect_wait_time', 'start_delay'])
+GetOVER37Status = namedtuple('OVER37Status', ['state', 'trip_reason', 'flags'])
+GetEnergyMeterDisplayText = namedtuple('EnergyMeterDisplayText', ['text', 'label'])
+GetPlugLockState = namedtuple('PlugLockState', ['state', 'lock_wanted'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletEVSEV2(Device):
     r"""
-    TBD
+    Controls the charging of electric vehicles according to IEC 61851
     """
 
     DEVICE_IDENTIFIER = 2167
@@ -48,7 +56,11 @@ class BrickletEVSEV2(Device):
     DEVICE_URL_PART = 'evse_v2' # internal
 
     CALLBACK_ENERGY_METER_VALUES = 45
+    CALLBACK_EICHRECHT_DATASET_LOW_LEVEL = 59
+    CALLBACK_EICHRECHT_SIGNATURE_LOW_LEVEL = 60
 
+    CALLBACK_EICHRECHT_DATASET = -59
+    CALLBACK_EICHRECHT_SIGNATURE = -60
 
     FUNCTION_GET_STATE = 1
     FUNCTION_GET_HARDWARE_CONFIGURATION = 2
@@ -94,6 +106,40 @@ class BrickletEVSEV2(Device):
     FUNCTION_GET_PHASE_AUTO_SWITCH = 42
     FUNCTION_SET_PHASES_CONNECTED = 43
     FUNCTION_GET_PHASES_CONNECTED = 44
+    FUNCTION_SET_CHARGING_PROTOCOL = 46
+    FUNCTION_GET_CHARGING_PROTOCOL = 47
+    FUNCTION_SET_EICHRECHT_GATEWAY_IDENTIFICATION = 48
+    FUNCTION_GET_EICHRECHT_GATEWAY_IDENTIFICATION = 49
+    FUNCTION_SET_EICHRECHT_GATEWAY_SERIAL = 50
+    FUNCTION_GET_EICHRECHT_GATEWAY_SERIAL = 51
+    FUNCTION_SET_EICHRECHT_USER_ASSIGNMENT = 52
+    FUNCTION_GET_EICHRECHT_USER_ASSIGNMENT = 53
+    FUNCTION_SET_EICHRECHT_CHARGE_POINT = 54
+    FUNCTION_GET_EICHRECHT_CHARGE_POINT = 55
+    FUNCTION_SET_EICHRECHT_TRANSACTION = 56
+    FUNCTION_GET_EICHRECHT_TRANSACTION_STATE = 57
+    FUNCTION_GET_EICHRECHT_PUBLIC_KEY = 58
+    FUNCTION_SET_ENUMERATE_CONFIGURATION = 61
+    FUNCTION_GET_ENUMERATE_CONFIGURATION = 62
+    FUNCTION_SET_ENUMERATE_VALUE = 63
+    FUNCTION_GET_ENUMERATE_VALUE = 64
+    FUNCTION_SET_PHASE_SWITCH_WAIT_TIME = 65
+    FUNCTION_GET_PHASE_SWITCH_WAIT_TIME = 66
+    FUNCTION_SET_PLC_MODEM = 67
+    FUNCTION_GET_PLC_MODEM = 68
+    FUNCTION_SET_TEST_MODE = 69
+    FUNCTION_GET_TEST_MODE = 70
+    FUNCTION_SET_OVE_R37_CONFIGURATION = 71
+    FUNCTION_GET_OVE_R37_CONFIGURATION = 72
+    FUNCTION_GET_OVE_R37_STATUS = 73
+    FUNCTION_SET_ENERGY_METER_DISPLAY_TEXT = 74
+    FUNCTION_GET_ENERGY_METER_DISPLAY_TEXT = 75
+    FUNCTION_SET_ENERGY_METER_DISPLAY_BACKLIGHT = 76
+    FUNCTION_GET_ENERGY_METER_DISPLAY_BACKLIGHT = 77
+    FUNCTION_SET_PLUG_LOCK_CONFIGURATION = 78
+    FUNCTION_GET_PLUG_LOCK_CONFIGURATION = 79
+    FUNCTION_SET_PLUG_LOCK_HARDWARE_STATE = 80
+    FUNCTION_GET_PLUG_LOCK_STATE = 81
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -137,6 +183,7 @@ class BrickletEVSEV2(Device):
     ERROR_STATE_DC_FAULT = 3
     ERROR_STATE_CONTACTOR = 4
     ERROR_STATE_COMMUNICATION = 5
+    ERROR_STATE_PLUG_LOCK = 6
     JUMPER_CONFIGURATION_6A = 0
     JUMPER_CONFIGURATION_10A = 1
     JUMPER_CONFIGURATION_13A = 2
@@ -156,14 +203,15 @@ class BrickletEVSEV2(Device):
     SHUTDOWN_INPUT_IGNORED = 0
     SHUTDOWN_INPUT_SHUTDOWN_ON_OPEN = 1
     SHUTDOWN_INPUT_SHUTDOWN_ON_CLOSE = 2
-    SHUTDOWN_INPUT_4300_WATT_ON_OPEN = 3
-    SHUTDOWN_INPUT_4300_WATT_ON_CLOSE = 4
+    SHUTDOWN_INPUT_4200_WATT_ON_OPEN = 3
+    SHUTDOWN_INPUT_4200_WATT_ON_CLOSE = 4
     OUTPUT_CONNECTED_TO_GROUND = 0
     OUTPUT_HIGH_IMPEDANCE = 1
     BUTTON_CONFIGURATION_DEACTIVATED = 0
     BUTTON_CONFIGURATION_START_CHARGING = 1
     BUTTON_CONFIGURATION_STOP_CHARGING = 2
     BUTTON_CONFIGURATION_START_AND_STOP_CHARGING = 3
+    BUTTON_CONFIGURATION_ENUMERATE = 4
     CONTROL_PILOT_DISCONNECTED = 0
     CONTROL_PILOT_CONNECTED = 1
     CONTROL_PILOT_AUTOMATIC = 2
@@ -175,6 +223,10 @@ class BrickletEVSEV2(Device):
     ENERGY_METER_TYPE_SDM630MCTV2 = 5
     ENERGY_METER_TYPE_DSZ15DZMOD = 6
     ENERGY_METER_TYPE_DEM4A = 7
+    ENERGY_METER_TYPE_DMED341MID7ER = 8
+    ENERGY_METER_TYPE_DSZ16DZE = 9
+    ENERGY_METER_TYPE_WM3M4C = 10
+    ENERGY_METER_TYPE_WM3M4 = 11
     INPUT_UNCONFIGURED = 0
     INPUT_ACTIVE_LOW_MAX_0A = 1
     INPUT_ACTIVE_LOW_MAX_6A = 2
@@ -192,6 +244,138 @@ class BrickletEVSEV2(Device):
     INPUT_ACTIVE_HIGH_MAX_16A = 14
     INPUT_ACTIVE_HIGH_MAX_20A = 15
     INPUT_ACTIVE_HIGH_MAX_25A = 16
+    CHARGING_PROTOCOL_IEC61851_PERMANENT = 0
+    CHARGING_PROTOCOL_IEC61851_TEMPORARY = 1
+    CHARGING_PROTOCOL_ISO15118 = 2
+    EICHRECHT_STATE_OK = 0
+    EICHRECHT_STATE_NOT_ALL_INFO_SET = 1
+    EICHRECHT_STATE_BUSY = 2
+    EICHRECHT_STATE_NOT_SUPPORTED = 3
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_RFID_NONE = 0
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_RFID_PLAIN = 1
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_RFID_RELATED = 2
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_RFID_PSK = 3
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_NONE = 4
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_RS = 5
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_AUTH = 6
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_RS_TLS = 7
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_AUTH_TLS = 8
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_CACHE = 9
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_WHITELIST = 10
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_OCPP_CERTIFIED = 11
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_ISO15118_NONE = 12
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_ISO15118_PNC = 13
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_PLMN_NONE = 14
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_PLMN_RING = 15
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_PLMN_SMS = 16
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_FLAG_NOT_SET = 17
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_NONE = 0
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_DENIED = 1
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_UNDEFINED = 2
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_ISO14443 = 3
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_ISO15693 = 4
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_EMAID = 5
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_EVCCID = 6
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_EVCOID = 7
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_ISO7812 = 8
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_CARD_TXN_NR = 9
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_CENTRAL = 10
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_CENTRAL_1 = 11
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_CENTRAL_2 = 12
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_LOCAL = 13
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_LOCAL_1 = 14
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_LOCAL_2 = 15
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_PHONE_NUMBER = 16
+    EICHRECHT_USER_ASSIGNMENT_IDENTIFICATION_TYPE_KEY_CODE = 17
+    EICHRECHT_CHARGE_POINT_IDENTIFICATION_TYPE_EVSEID = 0
+    EICHRECHT_CHARGE_POINT_IDENTIFICATION_TYPE_CBIDC = 1
+    EICHRECHT_SIGNATURE_STATUS_NOT_INITIALISED = 0
+    EICHRECHT_SIGNATURE_STATUS_IDLE = 1
+    EICHRECHT_SIGNATURE_STATUS_SIGNATURE_IN_PROGRESS = 2
+    EICHRECHT_SIGNATURE_STATUS_SIGNATURE_OK = 15
+    EICHRECHT_SIGNATURE_STATUS_INVALID_DATE_TIME = 128
+    EICHRECHT_SIGNATURE_STATUS_CHECKSUM_ERROR = 129
+    EICHRECHT_SIGNATURE_STATUS_INVALID_COMMAND = 130
+    EICHRECHT_SIGNATURE_STATUS_INVALID_STATE = 131
+    EICHRECHT_SIGNATURE_STATUS_INVALID_MEASUREMENT = 132
+    EICHRECHT_SIGNATURE_STATUS_TEST_MODE_ERROR = 133
+    EICHRECHT_SIGNATURE_STATUS_VERIFY_STATE_ERROR = 243
+    EICHRECHT_SIGNATURE_STATUS_SIGNATURE_STATE_ERROR = 244
+    EICHRECHT_SIGNATURE_STATUS_KEYPAIR_GENERATION = 245
+    EICHRECHT_SIGNATURE_STATUS_SHA_FAILED = 246
+    EICHRECHT_SIGNATURE_STATUS_INIT_FAILED = 247
+    EICHRECHT_SIGNATURE_STATUS_DATA_NOT_LOCKED = 248
+    EICHRECHT_SIGNATURE_STATUS_CONFIG_NOT_LOCKED = 249
+    EICHRECHT_SIGNATURE_STATUS_VERIFY_ERROR = 250
+    EICHRECHT_SIGNATURE_STATUS_PUBLIC_KEY_ERROR = 251
+    EICHRECHT_SIGNATURE_STATUS_INVALID_MESSAGE_FORMAT = 252
+    EICHRECHT_SIGNATURE_STATUS_INVALID_MESSAGE_SIZE = 253
+    EICHRECHT_SIGNATURE_STATUS_SIGNATURE_ERROR = 254
+    EICHRECHT_SIGNATURE_STATUS_UNDEFINED_ERROR = 255
+    EICHRECHT_SIGNATURE_FORMAT_ASN1 = 0
+    EICHRECHT_SIGNATURE_FORMAT_BASE64 = 1
+    EICHRECHT_MEASUREMENT_STATUS_IDLE = 0
+    EICHRECHT_MEASUREMENT_STATUS_ACTIVE = 1
+    EICHRECHT_MEASUREMENT_STATUS_ACTIVE_AFTER_POWER_FAILURE = 2
+    EICHRECHT_MEASUREMENT_STATUS_ACTIVE_AFTER_RESET = 3
+    EICHRECHT_TRANSACTION_COMMAND_BEGIN = 'B'
+    EICHRECHT_TRANSACTION_COMMAND_END = 'E'
+    EICHRECHT_TRANSACTION_COMMAND_INTERMEDIATE = 'C'
+    EICHRECHT_TRANSACTION_COMMAND_EXCEPTION = 'X'
+    EICHRECHT_TRANSACTION_COMMAND_TARIFF_CHANGE = 'T'
+    EICHRECHT_TRANSACTION_COMMAND_SUSPENDED = 'S'
+    EICHRECHT_TRANSACTION_COMMAND_END_WITH_BEGIN = 'r'
+    EICHRECHT_TRANSACTION_COMMAND_FISCAL_READING = 'f'
+    EICHRECHT_TRANSACTION_COMMAND_HOLD_COMMAND = 'h'
+    EICHRECHT_TRANSACTION_COMMAND_LAST_CHARGE_READING = 'i'
+    PHASE_SWITCH_WAIT_TIME_DEFAULT = 0
+    PHASE_SWITCH_WAIT_TIME_15_SECONDS = 1
+    PHASE_SWITCH_WAIT_TIME_20_SECONDS = 2
+    PHASE_SWITCH_WAIT_TIME_25_SECONDS = 3
+    PHASE_SWITCH_WAIT_TIME_30_SECONDS = 4
+    PHASE_SWITCH_WAIT_TIME_35_SECONDS = 5
+    PHASE_SWITCH_WAIT_TIME_40_SECONDS = 6
+    PHASE_SWITCH_WAIT_TIME_45_SECONDS = 7
+    PHASE_SWITCH_WAIT_TIME_50_SECONDS = 8
+    PHASE_SWITCH_WAIT_TIME_55_SECONDS = 9
+    PHASE_SWITCH_WAIT_TIME_60_SECONDS = 10
+    PHASE_SWITCH_WAIT_TIME_65_SECONDS = 11
+    PHASE_SWITCH_WAIT_TIME_70_SECONDS = 12
+    PHASE_SWITCH_WAIT_TIME_75_SECONDS = 13
+    PHASE_SWITCH_WAIT_TIME_80_SECONDS = 14
+    PHASE_SWITCH_WAIT_TIME_85_SECONDS = 15
+    PHASE_SWITCH_WAIT_TIME_90_SECONDS = 16
+    PHASE_SWITCH_WAIT_TIME_95_SECONDS = 17
+    PHASE_SWITCH_WAIT_TIME_100_SECONDS = 18
+    PHASE_SWITCH_WAIT_TIME_105_SECONDS = 19
+    PHASE_SWITCH_WAIT_TIME_110_SECONDS = 20
+    PHASE_SWITCH_WAIT_TIME_115_SECONDS = 21
+    PHASE_SWITCH_WAIT_TIME_120_SECONDS = 22
+    OVE_R37_STATE_DISABLED = 0
+    OVE_R37_STATE_NORMAL = 1
+    OVE_R37_STATE_TRIPPED = 2
+    OVE_R37_STATE_WAIT = 3
+    OVE_R37_STATE_RAMP = 4
+    OVE_R37_STATE_BOOT = 5
+    OVE_R37_TRIP_REASON_NONE = 0
+    OVE_R37_TRIP_REASON_UNDERVOLTAGE = 1
+    OVE_R37_TRIP_REASON_OVERVOLTAGE = 2
+    OVE_R37_TRIP_REASON_FREQUENCY = 4
+    OVE_R37_FLAGS_VOLTAGE_IN_RANGE = 1
+    OVE_R37_FLAGS_FREQUENCY_IN_RANGE = 2
+    OVE_R37_FLAGS_VOLTAGE_VALID = 4
+    OVE_R37_FLAGS_CURRENT_VALID = 8
+    OVE_R37_FLAGS_FREQUENCY_VALID = 16
+    PLUG_LOCK_STATE_DISABLED = 0
+    PLUG_LOCK_STATE_NO_HARDWARE = 1
+    PLUG_LOCK_STATE_IDLE = 2
+    PLUG_LOCK_STATE_WAITING = 3
+    PLUG_LOCK_STATE_LOCKED = 4
+    PLUG_LOCK_STATE_FAULT_TIMEOUT = 5
+    PLUG_LOCK_STATE_FAULT_LOCK = 6
+    ENERGY_METER_DISPLAY_BACKLIGHT_OFF = 0
+    ENERGY_METER_DISPLAY_BACKLIGHT_ON = 1
+    ENERGY_METER_DISPLAY_BACKLIGHT_AUTOMATIC = 2
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -261,6 +445,40 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_PHASE_AUTO_SWITCH] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_PHASES_CONNECTED] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_PHASES_CONNECTED] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_CHARGING_PROTOCOL] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_CHARGING_PROTOCOL] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EICHRECHT_GATEWAY_IDENTIFICATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_GATEWAY_IDENTIFICATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EICHRECHT_GATEWAY_SERIAL] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_GATEWAY_SERIAL] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EICHRECHT_USER_ASSIGNMENT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_USER_ASSIGNMENT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EICHRECHT_CHARGE_POINT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_CHARGE_POINT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EICHRECHT_TRANSACTION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_TRANSACTION_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EICHRECHT_PUBLIC_KEY] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_ENUMERATE_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENUMERATE_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_ENUMERATE_VALUE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENUMERATE_VALUE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_PHASE_SWITCH_WAIT_TIME] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_PHASE_SWITCH_WAIT_TIME] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_PLC_MODEM] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_PLC_MODEM] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_TEST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_TEST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_OVE_R37_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_OVE_R37_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_OVE_R37_STATUS] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_ENERGY_METER_DISPLAY_TEXT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DISPLAY_TEXT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_ENERGY_METER_DISPLAY_BACKLIGHT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DISPLAY_BACKLIGHT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_PLUG_LOCK_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_PLUG_LOCK_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_PLUG_LOCK_HARDWARE_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_PLUG_LOCK_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -275,12 +493,27 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_IDENTITY] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletEVSEV2.CALLBACK_ENERGY_METER_VALUES] = (26, 'f 3f 3! 3!')
+        self.callback_formats[BrickletEVSEV2.CALLBACK_EICHRECHT_DATASET_LOW_LEVEL] = (72, 'H H 60c')
+        self.callback_formats[BrickletEVSEV2.CALLBACK_EICHRECHT_SIGNATURE_LOW_LEVEL] = (72, 'H H 60c')
 
+        self.high_level_callbacks[BrickletEVSEV2.CALLBACK_EICHRECHT_DATASET] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
+        self.high_level_callbacks[BrickletEVSEV2.CALLBACK_EICHRECHT_SIGNATURE] = [('stream_length', 'stream_chunk_offset', 'stream_chunk_data'), {'fixed_length': None, 'single_chunk': False}, None]
         ipcon.add_device(self)
 
     def get_state(self):
         r"""
-        TODO
+        Returns the current state of the EVSE.
+
+        * IEC61851 State: State according to IEC 61851 (A = not connected,
+          B = connected, C = charging, D = unused, EF = error).
+        * Charger State: High level state of the charging process.
+        * Contactor State: State of the contactor (relays for N+L1 and L2+L3).
+        * Contactor Error: Error code of the contactor check, 0 means OK.
+        * Allowed Charging Current: Charging current that is currently allowed in mA
+          (minimum over all active charging slots).
+        * Error State: 0 if everything is OK, otherwise the current error.
+        * Lock State: State of the type 2 socket lock motor.
+        * DC Fault Current State: State of the DC fault current protection.
         """
         self.check_validity()
 
@@ -288,7 +521,15 @@ class BrickletEVSEV2(Device):
 
     def get_hardware_configuration(self):
         r"""
-        TODO
+        Returns the hardware configuration of the EVSE.
+
+        * Jumper Configuration: Maximum current of the incoming cable as configured
+          through the slide switch.
+        * Has Lock Switch: *true* if a type 2 socket lock motor is connected.
+        * EVSE Version: Hardware version of the EVSE (e.g. 20 for EVSE 2.0, 30 for
+          3.0 and 40 for 4.0).
+        * Energy Meter Type: Type of the connected energy meter (Not Available if no
+          energy meter is connected).
         """
         self.check_validity()
 
@@ -296,20 +537,44 @@ class BrickletEVSEV2(Device):
 
     def get_low_level_state(self):
         r"""
-        TODO
+        Returns the low level state of the EVSE. This is mostly useful for debugging.
+
+        * LED State: State of the status LED.
+        * CP PWM Duty Cycle: Duty cycle of the CP (control pilot) PWM in 1/10 %.
+        * ADC Values: Raw ADC values of the voltage measurements.
+        * Voltages: Measured voltages (CP/PE before and after the resistor for high
+          and low PWM, PP/PE and the +12V and -12V rails).
+        * Resistances: Calculated resistances (CP/PE and PP/PE).
+        * GPIO: State of the GPIO pins.
+        * Car Stopped Charging: *true* if the car stopped the charging by itself.
+        * Time Since State Change: Time since the last IEC 61851 state change.
+        * Time Since DC Fault Check: Time since the last DC fault current check.
+        * Uptime: Uptime of the EVSE.
         """
         self.check_validity()
 
-        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 66, 'B H 7H 7h 2I 24! I I I I'))
+        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 63, 'B H 7H 7h 2I 24! ! I I I'))
 
     def set_charging_slot(self, slot, max_current, active, clear_on_disconnect):
         r"""
-        fixed slots:
-        0: incoming cable (read-only, configured through slide switch)
-        1: outgoing cable (read-only, configured through resistor)
-        2: gpio input 0 (shutdown input)
-        3: gpio input 1 (input)
-        4: button (0A <-> 32A, can be controlled from web interface with start button and physical button if configured)
+        Sets the configuration of a charging slot. The EVSE has 20 charging slots
+        (0-19). The charging current that is allowed is the minimum of the maximum
+        current of all active slots.
+
+        * Slot: Index of the slot (0-19).
+        * Max Current: Maximum current of the slot in mA. 0 blocks charging.
+        * Active: *true* if the slot is taken into account.
+        * Clear On Disconnect: *true* if the slot should be deactivated when the
+          cable is disconnected.
+
+        The following slots have a fixed meaning:
+
+        * 0: Incoming cable (read-only, configured through slide switch).
+        * 1: Outgoing cable (read-only, configured through resistor).
+        * 2: GPIO input 0 (shutdown input).
+        * 3: GPIO input 1 (input).
+        * 4: Button (0A <-> 32A, can be controlled from the web interface with the
+          start button and the physical button if configured).
         """
         self.check_validity()
 
@@ -322,7 +587,7 @@ class BrickletEVSEV2(Device):
 
     def set_charging_slot_max_current(self, slot, max_current):
         r"""
-
+        Sets the maximum current of a charging slot, see :func:`Set Charging Slot`.
         """
         self.check_validity()
 
@@ -333,7 +598,7 @@ class BrickletEVSEV2(Device):
 
     def set_charging_slot_active(self, slot, active):
         r"""
-
+        Activates/deactivates a charging slot, see :func:`Set Charging Slot`.
         """
         self.check_validity()
 
@@ -344,7 +609,8 @@ class BrickletEVSEV2(Device):
 
     def set_charging_slot_clear_on_disconnect(self, slot, clear_on_disconnect):
         r"""
-
+        Sets the clear-on-disconnect flag of a charging slot, see
+        :func:`Set Charging Slot`.
         """
         self.check_validity()
 
@@ -355,7 +621,8 @@ class BrickletEVSEV2(Device):
 
     def get_charging_slot(self, slot):
         r"""
-
+        Returns the configuration of a charging slot as set by
+        :func:`Set Charging Slot`.
         """
         self.check_validity()
 
@@ -365,7 +632,11 @@ class BrickletEVSEV2(Device):
 
     def get_all_charging_slots(self):
         r"""
-        packed getter
+        Returns the configuration of all 20 charging slots, see
+        :func:`Set Charging Slot`.
+
+        The active and clear-on-disconnect flags are packed: bit 0 is the active flag
+        and bit 1 is the clear-on-disconnect flag.
         """
         self.check_validity()
 
@@ -373,11 +644,11 @@ class BrickletEVSEV2(Device):
 
     def set_charging_slot_default(self, slot, max_current, active, clear_on_disconnect):
         r"""
-        fixed slots:
-        0: incoming cable (read-only, configured through slide switch)
-        1: outgoing cable (read-only, configured through resistor)
-        2: gpio input 0 (shutdown input)
-        3: gpio input 1 (input)
+        Sets the default configuration of a charging slot. The default values are
+        used to initialize the charging slots on startup. Slots 0 and 1 (the cables)
+        have no default and can not be configured here.
+
+        See :func:`Set Charging Slot` for the meaning of the parameters.
         """
         self.check_validity()
 
@@ -390,7 +661,8 @@ class BrickletEVSEV2(Device):
 
     def get_charging_slot_default(self, slot):
         r"""
-
+        Returns the default configuration of a charging slot as set by
+        :func:`Set Charging Slot Default`.
         """
         self.check_validity()
 
@@ -400,7 +672,12 @@ class BrickletEVSEV2(Device):
 
     def get_energy_meter_values(self):
         r"""
-        TODO
+        Returns the measured values of the connected energy meter.
+
+        * Power: Total active power in W.
+        * Current: Current per phase (L1, L2, L3) in A.
+        * Phases Active: For each phase *true* if current is currently flowing.
+        * Phases Connected: For each phase *true* if the phase is connected.
         """
         self.check_validity()
 
@@ -408,15 +685,19 @@ class BrickletEVSEV2(Device):
 
     def get_all_energy_meter_values_low_level(self):
         r"""
-        TBD
+        Returns all values that the connected energy meter provides. The meaning of
+        the values depends on the energy meter type, see
+        :func:`Get Hardware Configuration`.
         """
         self.check_validity()
 
-        return GetAllEnergyMeterValuesLowLevel(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_ENERGY_METER_VALUES_LOW_LEVEL, (), '', 70, 'H 15f'))
+        return GetAllEnergyMeterValuesLowLevel(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_ENERGY_METER_VALUES_LOW_LEVEL, (), '', 72, 'H H 15f'))
 
     def get_energy_meter_errors(self):
         r"""
-        TODO
+        Returns the Modbus communication error counters of the connected energy
+        meter. The counters are: local timeout, global timeout, illegal function,
+        illegal data address, illegal data value and slave device failure.
         """
         self.check_validity()
 
@@ -424,7 +705,8 @@ class BrickletEVSEV2(Device):
 
     def reset_energy_meter_relative_energy(self):
         r"""
-        TODO
+        Sets the relative energy value of the energy meter to zero. This sets the
+        point in time from which on the relative energy meter values are counted.
         """
         self.check_validity()
 
@@ -432,7 +714,12 @@ class BrickletEVSEV2(Device):
 
     def reset_dc_fault_current_state(self, password):
         r"""
-        TODO
+        Resets the DC fault current protection back to normal condition after a DC
+        fault was detected. The password is 0xDC42FA23. A new DC fault current
+        calibration is started immediately after the reset.
+
+        Before resetting the DC fault current protection you should make sure that
+        the fault is gone, otherwise the next charging session will trip it again.
         """
         self.check_validity()
 
@@ -442,7 +729,14 @@ class BrickletEVSEV2(Device):
 
     def set_gpio_configuration(self, shutdown_input_configuration, input_configuration, output_configuration):
         r"""
-        TODO
+        Sets the configuration of the GPIOs.
+
+        * Shutdown Input Configuration: Defines how the shutdown input (GPIO input 0)
+          reacts (e.g. shut down charging on open/close or limit to 4200 Watt).
+        * Input Configuration: Defines the function of GPIO input 1 (e.g. limit the
+          charging current depending on the input level).
+        * Output Configuration: Defines the default state of the GP output (connected
+          to ground or high impedance).
         """
         self.check_validity()
 
@@ -454,7 +748,7 @@ class BrickletEVSEV2(Device):
 
     def get_gpio_configuration(self):
         r"""
-        TODO
+        Returns the GPIO configuration as set by :func:`Set GPIO Configuration`.
         """
         self.check_validity()
 
@@ -462,7 +756,8 @@ class BrickletEVSEV2(Device):
 
     def get_data_storage(self, page):
         r"""
-        TODO
+        Returns the content of the given storage page (63 bytes), see
+        :func:`Set Data Storage`.
         """
         self.check_validity()
 
@@ -472,7 +767,8 @@ class BrickletEVSEV2(Device):
 
     def set_data_storage(self, page, data):
         r"""
-        TODO
+        Stores 63 bytes of data in the given storage page. This storage can be used
+        by the ESP32 to store its own data on the EVSE.
         """
         self.check_validity()
 
@@ -483,7 +779,8 @@ class BrickletEVSEV2(Device):
 
     def get_indicator_led(self):
         r"""
-        TODO
+        Returns the current state of the indicator LED as set by
+        :func:`Set Indicator LED`. The duration is the remaining duration in ms.
         """
         self.check_validity()
 
@@ -491,7 +788,18 @@ class BrickletEVSEV2(Device):
 
     def set_indicator_led(self, indication, duration, color_h, color_s, color_v):
         r"""
-        TODO
+        Sets the indicator LED to signal different states to the user.
+
+        * Indication: -1 leaves the control of the LED to the EVSE, 0 turns it off,
+          255 turns it on, 1-254 sets a PWM value and 1001/1002/1003 show an
+          acknowledge/not-acknowledge/nag indication.
+        * Duration: Duration of the indication in ms.
+        * Color H/S/V: HSV color of the LED. If the value (V) is 0 an automatic color
+          is used. EVSE 2.0 only supports blue.
+
+        The returned status is 0 if the indication could be set. Otherwise the LED is
+        currently in use by the EVSE (e.g. blinking, flickering or breathing) and the
+        status is the current LED state.
         """
         self.check_validity()
 
@@ -505,7 +813,9 @@ class BrickletEVSEV2(Device):
 
     def set_button_configuration(self, button_configuration):
         r"""
-        TODO
+        Sets the function of the button (key switch). The button can be configured to
+        start charging, stop charging, both or to enumerate (see the enumerate
+        functions). It can also be deactivated.
         """
         self.check_validity()
 
@@ -515,7 +825,7 @@ class BrickletEVSEV2(Device):
 
     def get_button_configuration(self):
         r"""
-        TODO
+        Returns the button configuration as set by :func:`Set Button Configuration`.
         """
         self.check_validity()
 
@@ -523,7 +833,10 @@ class BrickletEVSEV2(Device):
 
     def get_button_state(self):
         r"""
-        TODO
+        Returns the state of the button (key switch).
+
+        The press and release time are the times (relative to the EVSE uptime) of the
+        last press and release. Button Pressed is *true* while the button is held down.
         """
         self.check_validity()
 
@@ -531,7 +844,9 @@ class BrickletEVSEV2(Device):
 
     def set_ev_wakeup(self, ev_wakeup_enabled):
         r"""
-        TODO
+        Enables/disables the EV wakeup. If enabled the EVSE adheres to IEC 61851
+        Annex A.5.3 and tries to wake up the electric vehicle after a long period of
+        inactivity. This helps with some legacy EVs that do not wake up by themselves.
         """
         self.check_validity()
 
@@ -541,7 +856,7 @@ class BrickletEVSEV2(Device):
 
     def get_ev_wakuep(self):
         r"""
-        TODO
+        Returns the EV wakeup setting as set by :func:`Set EV Wakeup`.
         """
         self.check_validity()
 
@@ -549,7 +864,12 @@ class BrickletEVSEV2(Device):
 
     def set_control_pilot_disconnect(self, control_pilot_disconnect):
         r"""
-        TODO
+        Disconnects/connects the control pilot (CP) from the electric vehicle. This
+        can be used to stop a charging session without opening the contactor.
+
+        The CP can only be disconnected in IEC 61851 state A or B and only if the
+        contactor is currently not active. The returned value shows whether the CP is
+        now disconnected.
         """
         self.check_validity()
 
@@ -559,7 +879,8 @@ class BrickletEVSEV2(Device):
 
     def get_control_pilot_disconnect(self):
         r"""
-        TODO
+        Returns the control pilot disconnect state as set by
+        :func:`Set Control Pilot Disconnect`.
         """
         self.check_validity()
 
@@ -567,7 +888,9 @@ class BrickletEVSEV2(Device):
 
     def get_all_data_1(self):
         r"""
-        TODO
+        Returns the values of :func:`Get State`, :func:`Get Hardware Configuration`,
+        :func:`Get Energy Meter Values` and :func:`Get Energy Meter Errors` combined
+        in one call.
         """
         self.check_validity()
 
@@ -575,15 +898,23 @@ class BrickletEVSEV2(Device):
 
     def get_all_data_2(self):
         r"""
-        TODO
+        Returns the values of :func:`Get GPIO Configuration`,
+        :func:`Get Indicator LED`, :func:`Get Button Configuration`,
+        :func:`Get Button State`, :func:`Get EV Wakuep`,
+        :func:`Get Control Pilot Disconnect`, :func:`Get Boost Mode`,
+        :func:`Get Temperature`, :func:`Get Phase Control`,
+        :func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
+        :func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time`,
+        :func:`Get PLC Modem`, :func:`Get OVE R37 Status` and
+        :func:`Get Energy Meter Display Backlight` combined in one call.
         """
         self.check_validity()
 
-        return GetAllData2(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2, (), '', 40, 'B B B h H H B B B I I ! ! ! ! h B B B B ! B'))
+        return GetAllData2(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2, (), '', 51, 'B B B h H H B B B I I ! ! ! ! h B B B B ! B B I B ! B B B B'))
 
     def factory_reset(self, password):
         r"""
-        TODO
+        Resets the EVSE to the factory settings. The password is 0x2342FACD.
         """
         self.check_validity()
 
@@ -593,7 +924,12 @@ class BrickletEVSEV2(Device):
 
     def get_button_press_boot_time(self, reset):
         r"""
-        TODO
+        Returns the amount of time the button was continuously pressed during boot in
+        ms. This can be used to detect a long button press during startup (e.g. to
+        trigger a factory reset). Returns 0xFFFFFFFF if the boot press was already
+        reset.
+
+        If Reset is set to *true* the value is reset after it has been read.
         """
         self.check_validity()
 
@@ -603,7 +939,10 @@ class BrickletEVSEV2(Device):
 
     def set_boost_mode(self, boost_mode_enabled):
         r"""
-        TODO
+        Enables/disables the boost mode. In boost mode the duty cycle of the CP PWM
+        signal is increased by about 4µs (which stays within the IEC 61851
+        tolerance). This signals a slightly higher current to the car, which allows
+        some cars to charge a bit faster. Boost mode is disabled by default.
         """
         self.check_validity()
 
@@ -613,7 +952,7 @@ class BrickletEVSEV2(Device):
 
     def get_boost_mode(self):
         r"""
-        TODO
+        Returns the boost mode setting as set by :func:`Set Boost Mode`.
         """
         self.check_validity()
 
@@ -621,7 +960,10 @@ class BrickletEVSEV2(Device):
 
     def trigger_dc_fault_test(self, password):
         r"""
-        TODO
+        Triggers a test of the DC fault current protection. The password is
+        0xDCFAE550. This can only be started in IEC 61851 state A (not connected) and
+        if no calibration is currently running. The returned value shows whether the
+        test was started.
         """
         self.check_validity()
 
@@ -631,7 +973,9 @@ class BrickletEVSEV2(Device):
 
     def set_gp_output(self, gp_output):
         r"""
-        TODO
+        Sets the state of the general purpose output (connected to ground or high
+        impedance). The default state after boot is set with
+        :func:`Set GPIO Configuration`. Only available for EVSE 2.0.
         """
         self.check_validity()
 
@@ -641,7 +985,8 @@ class BrickletEVSEV2(Device):
 
     def get_temperature(self):
         r"""
-        TODO
+        Returns the temperature of the EVSE in 1/100 °C. EVSE 2.0 has no temperature
+        sensor and always returns 0.
         """
         self.check_validity()
 
@@ -649,7 +994,9 @@ class BrickletEVSEV2(Device):
 
     def set_phase_control(self, phases):
         r"""
-        TODO
+        Sets the number of phases that are used for charging (1 or 3). This requires
+        the hardware to support phase switching (EVSE 3.0 and newer). On EVSE 2.0 this
+        function has no effect.
         """
         self.check_validity()
 
@@ -659,7 +1006,12 @@ class BrickletEVSEV2(Device):
 
     def get_phase_control(self):
         r"""
-        TODO
+        Returns the current phase control state.
+
+        * Phases Current: Number of phases currently used for charging (1 or 3).
+        * Phases Requested: Number of phases requested by :func:`Set Phase Control`.
+        * Phases State: Progress state of an ongoing phase switch.
+        * Phases Info: 0 if normal, 1 if forced to one phase by the auto-switch.
         """
         self.check_validity()
 
@@ -667,7 +1019,10 @@ class BrickletEVSEV2(Device):
 
     def set_phase_auto_switch(self, phase_auto_switch_enabled):
         r"""
-        TODO
+        Enables/disables automatic phase switching. If enabled the EVSE switches
+        between one and three phases depending on the available charging current. This
+        requires the hardware to support phase switching (EVSE 3.0 and newer) and is
+        ignored on EVSE 2.0.
         """
         self.check_validity()
 
@@ -677,7 +1032,7 @@ class BrickletEVSEV2(Device):
 
     def get_phase_auto_switch(self):
         r"""
-        TODO
+        Returns the phase auto switch setting as set by :func:`Set Phase Auto Switch`.
         """
         self.check_validity()
 
@@ -685,7 +1040,8 @@ class BrickletEVSEV2(Device):
 
     def set_phases_connected(self, phases_connected):
         r"""
-        TODO
+        Sets the number of phases that are physically connected to the EVSE (1 or 3).
+        This is used by the phase control to know how many phases are available.
         """
         self.check_validity()
 
@@ -695,11 +1051,471 @@ class BrickletEVSEV2(Device):
 
     def get_phases_connected(self):
         r"""
-        TODO
+        Returns the number of connected phases as set by :func:`Set Phases Connected`.
         """
         self.check_validity()
 
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PHASES_CONNECTED, (), '', 9, 'B')
+
+    def set_charging_protocol(self, charging_protocol, cp_duty_cycle):
+        r"""
+        Sets the charging protocol that is used (IEC 61851 or ISO 15118). The CP duty
+        cycle is only used for ISO 15118, where only 50 (5%) and 1000 (100%) are
+        accepted. This requires ISO 15118 support (EVSE 4.0) and has no effect
+        otherwise.
+        """
+        self.check_validity()
+
+        charging_protocol = int(charging_protocol)
+        cp_duty_cycle = int(cp_duty_cycle)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_PROTOCOL, (charging_protocol, cp_duty_cycle), 'B H', 0, '')
+
+    def get_charging_protocol(self):
+        r"""
+        Returns the charging protocol as set by :func:`Set Charging Protocol`.
+        """
+        self.check_validity()
+
+        return GetChargingProtocol(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CHARGING_PROTOCOL, (), '', 11, 'B H'))
+
+    def set_eichrecht_gateway_identification(self, gateway_identification):
+        r"""
+        Sets the gateway identification (OCMF field "GI") for the calibration law
+        (Eichrecht) signed metering. This requires an Eichrecht-capable energy meter
+        (EVSE 4.0). The returned state shows whether the value could be set.
+        """
+        self.check_validity()
+
+        gateway_identification = create_char_list(gateway_identification)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EICHRECHT_GATEWAY_IDENTIFICATION, (gateway_identification,), '41c', 9, 'B')
+
+    def get_eichrecht_gateway_identification(self):
+        r"""
+        Returns the gateway identification as set by
+        :func:`Set Eichrecht Gateway Identification`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_GATEWAY_IDENTIFICATION, (), '', 49, '41c')
+
+    def set_eichrecht_gateway_serial(self, gateway_serial):
+        r"""
+        Sets the gateway serial (OCMF field "GS") for the calibration law
+        (Eichrecht) signed metering. This requires an Eichrecht-capable energy meter
+        (EVSE 4.0). The returned state shows whether the value could be set.
+        """
+        self.check_validity()
+
+        gateway_serial = create_char_list(gateway_serial)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EICHRECHT_GATEWAY_SERIAL, (gateway_serial,), '25c', 9, 'B')
+
+    def get_eichrecht_gateway_serial(self):
+        r"""
+        Returns the gateway serial as set by :func:`Set Eichrecht Gateway Serial`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_GATEWAY_SERIAL, (), '', 33, '25c')
+
+    def set_eichrecht_user_assignment(self, identification_status, identification_flags, identification_type, identification_data):
+        r"""
+        Sets the user assignment (OCMF fields "IS", "IF", "IT" and "ID") for the
+        calibration law (Eichrecht) signed metering. It identifies the user of a
+        charging transaction.
+
+        * Identification Status: *true* if a user is assigned.
+        * Identification Flags: Identification flags (up to 4 entries).
+        * Identification Type: Type of the identification data.
+        * Identification Data: The identification data itself.
+
+        This requires an Eichrecht-capable energy meter (EVSE 4.0). The returned state
+        shows whether the value could be set.
+        """
+        self.check_validity()
+
+        identification_status = bool(identification_status)
+        identification_flags = list(map(int, identification_flags))
+        identification_type = int(identification_type)
+        identification_data = create_char_list(identification_data)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EICHRECHT_USER_ASSIGNMENT, (identification_status, identification_flags, identification_type, identification_data), '! 4B B 40c', 9, 'B')
+
+    def get_eichrecht_user_assignment(self):
+        r"""
+        Returns the user assignment as set by :func:`Set Eichrecht User Assignment`.
+        """
+        self.check_validity()
+
+        return GetEichrechtUserAssignment(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_USER_ASSIGNMENT, (), '', 54, '! 4B B 40c'))
+
+    def set_eichrecht_charge_point(self, identification_type, identification):
+        r"""
+        Sets the charge point identification (OCMF fields "CT" and "CI") for the
+        calibration law (Eichrecht) signed metering. This requires an
+        Eichrecht-capable energy meter (EVSE 4.0). The returned state shows whether
+        the value could be set.
+        """
+        self.check_validity()
+
+        identification_type = int(identification_type)
+        identification = create_char_list(identification)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EICHRECHT_CHARGE_POINT, (identification_type, identification), 'B 20c', 9, 'B')
+
+    def get_eichrecht_charge_point(self):
+        r"""
+        Returns the charge point identification as set by
+        :func:`Set Eichrecht Charge Point`.
+        """
+        self.check_validity()
+
+        return GetEichrechtChargePoint(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_CHARGE_POINT, (), '', 29, 'B 20c'))
+
+    def set_eichrecht_transaction(self, transaction, unix_time, utc_time_offset, signature_format):
+        r"""
+        Starts or modifies Eichrecht transaction. A transaction
+        generates a signed OCMF dataset (e.g. at the begin and end of a charging
+        session).
+
+        * Transaction: The transaction command (e.g. begin or end).
+        * Unix Time: The current time as unix timestamp in seconds.
+        * UTC Time Offset: The local time offset to UTC in minutes.
+        * Signature Format: The format of the generated signature (ASN.1 or Base64).
+
+        The signed dataset and signature are returned through the
+        :cb:`Eichrecht Dataset Low Level` and :cb:`Eichrecht Signature Low Level`
+        callbacks. This requires an Eichrecht-capable energy meter (EVSE 4.0). The
+        returned state shows whether the transaction could be started.
+        """
+        self.check_validity()
+
+        transaction = create_char(transaction)
+        unix_time = int(unix_time)
+        utc_time_offset = int(utc_time_offset)
+        signature_format = int(signature_format)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EICHRECHT_TRANSACTION, (transaction, unix_time, utc_time_offset, signature_format), 'c I h H', 9, 'B')
+
+    def get_eichrecht_transaction_state(self):
+        r"""
+        Returns the state of the current Eichrecht transaction, see
+        :func:`Set Eichrecht Transaction`. It includes the current transaction
+        command, the transaction and inner state, and the measurement and signature
+        status of the energy meter.
+        """
+        self.check_validity()
+
+        return GetEichrechtTransactionState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_TRANSACTION_STATE, (), '', 16, 'c B B H H B'))
+
+    def get_eichrecht_public_key(self):
+        r"""
+        Returns the public key of the energy meter that is used to verify the
+        Eichrecht signatures.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EICHRECHT_PUBLIC_KEY, (), '', 72, '64B')
+
+    def set_enumerate_configuration(self, enumerator_h, enumerator_s, enumerator_v):
+        r"""
+        Sets the configuration for the enumerate function of the button. The button
+        can step through up to 8 values, each one represented by an HSV color of the
+        indicator LED. Trailing entries with value (V) 0 are ignored.
+
+        The button function must be set to enumerate with
+        :func:`Set Button Configuration`.
+        """
+        self.check_validity()
+
+        enumerator_h = list(map(int, enumerator_h))
+        enumerator_s = list(map(int, enumerator_s))
+        enumerator_v = list(map(int, enumerator_v))
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_ENUMERATE_CONFIGURATION, (enumerator_h, enumerator_s, enumerator_v), '8H 8B 8B', 0, '')
+
+    def get_enumerate_configuration(self):
+        r"""
+        Returns the enumerate configuration as set by
+        :func:`Set Enumerate Configuration`.
+        """
+        self.check_validity()
+
+        return GetEnumerateConfiguration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENUMERATE_CONFIGURATION, (), '', 40, '8H 8B 8B'))
+
+    def set_enumerate_value(self, value):
+        r"""
+        Sets the current enumerate value immediately, see
+        :func:`Set Enumerate Configuration`.
+        """
+        self.check_validity()
+
+        value = int(value)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_ENUMERATE_VALUE, (value,), 'B', 0, '')
+
+    def get_enumerate_value(self):
+        r"""
+        Returns the current enumerate value and the EVSE uptime (in ms) of the last
+        value change. A new value is only reported once it has been stable for more
+        than 2 seconds. See :func:`Set Enumerate Configuration`.
+        """
+        self.check_validity()
+
+        return GetEnumerateValue(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENUMERATE_VALUE, (), '', 13, 'B I'))
+
+    def set_phase_switch_wait_time(self, phase_switch_wait_time):
+        r"""
+        Sets the minimum wait time between two phase switches (15s to 120s, or
+        default). The wait time prevents the phases from being switched too often.
+        """
+        self.check_validity()
+
+        phase_switch_wait_time = int(phase_switch_wait_time)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_PHASE_SWITCH_WAIT_TIME, (phase_switch_wait_time,), 'B', 0, '')
+
+    def get_phase_switch_wait_time(self):
+        r"""
+        Returns the phase switch wait time as set by
+        :func:`Set Phase Switch Wait Time`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PHASE_SWITCH_WAIT_TIME, (), '', 9, 'B')
+
+    def set_plc_modem(self, plc_modem_enabled):
+        r"""
+        Enables/disables the PLC (powerline communication) modem that is used for
+        ISO 15118 communication. The PLC modem is enabled by default. Only available
+        on hardware with a PLC modem (EVSE 4.0).
+        """
+        self.check_validity()
+
+        plc_modem_enabled = bool(plc_modem_enabled)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_PLC_MODEM, (plc_modem_enabled,), '!', 0, '')
+
+    def get_plc_modem(self):
+        r"""
+        Returns the PLC modem setting as set by :func:`Set PLC Modem`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PLC_MODEM, (), '', 9, '!')
+
+    def set_test_mode(self, test_mode_enabled, password):
+        r"""
+        Enables/disables the test mode. The password is 0xDEADBEEF. The test mode is
+        used during production and should normally not be needed. It is disabled by
+        default.
+        """
+        self.check_validity()
+
+        test_mode_enabled = bool(test_mode_enabled)
+        password = int(password)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_TEST_MODE, (test_mode_enabled, password), '! I', 0, '')
+
+    def get_test_mode(self):
+        r"""
+        Returns the test mode setting as set by :func:`Set Test Mode`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_TEST_MODE, (), '', 9, '!')
+
+    def set_ove_r37_configuration(self, enabled, undervoltage_threshold, undervoltage_observation_time, reconnect_wait_time, start_delay):
+        r"""
+        Sets the configuration for the OVE-Richtlinie R 37 grid support functions.
+
+        If enabled the undervoltage trip, reconnect conditions and phase symmetry
+        checks according to OVE R 37 are active. The undervoltage threshold is given
+        in 1/1000 pu of the nominal voltage (800 = 0.80 pu), the observation time in
+        ms, the reconnect wait time and start delay in seconds (0 to 300).
+
+        This is currently only supported on WARP4 with an Iskra meter.
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+        undervoltage_threshold = int(undervoltage_threshold)
+        undervoltage_observation_time = int(undervoltage_observation_time)
+        reconnect_wait_time = int(reconnect_wait_time)
+        start_delay = int(start_delay)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_OVE_R37_CONFIGURATION, (enabled, undervoltage_threshold, undervoltage_observation_time, reconnect_wait_time, start_delay), '! H H H H', 0, '')
+
+    def get_ove_r37_configuration(self):
+        r"""
+        Returns the configuration as set by :func:`Set OVE R37 Configuration`.
+        """
+        self.check_validity()
+
+        return GetOVER37Configuration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_OVE_R37_CONFIGURATION, (), '', 17, '! H H H H'))
+
+    def get_ove_r37_status(self):
+        r"""
+        Returns the current state of the OVE R 37 grid support functions.
+
+        The state indicates the charging state machine (disabled, normal, tripped,
+        waiting for reconnect or ramping up), the trip reason is a bitmask of the
+        reasons charging was tripped and the flags are a bitmask of the validity and
+        in-range status of the voltage and frequency measurements.
+        """
+        self.check_validity()
+
+        return GetOVER37Status(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_OVE_R37_STATUS, (), '', 11, 'B B B'))
+
+    def set_energy_meter_display_text(self, text, label):
+        r"""
+        Sets a custom text (8 characters) and label (4 characters) that is shown on the
+        7-segment LCD of the energy meter. Only available with Iskra WM3M4/WM3M4C
+        energy meters.
+
+        The 7-segment display supports the following characters:
+        0, O, 1, I, l, 2, 3, 4, 5, S, 6, G, 7, 8, 9, A, B, b, C, D, d, E, F, H, L, J,
+        N, P, R, U, V, c, h, i, r, n, o, v, u, t, -.
+        Non-displayable characters are replaced by a blank.
+
+        If a non-empty text is set, it replaces the normal display values (the LCD
+        shows only the custom text and label). Setting an empty text restores the
+        default display of the energy meter (energy consumption of charging).
+
+        The text is not stored in the energy meter, after a power cycle of the
+        energy meter the default display is restored until a text is set again.
+        """
+        self.check_validity()
+
+        text = create_string(text)
+        label = create_string(label)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_ENERGY_METER_DISPLAY_TEXT, (text, label), '8s 4s', 0, '')
+
+    def get_energy_meter_display_text(self):
+        r"""
+        Returns the text and label as set by :func:`Set Energy Meter Display Text`.
+        """
+        self.check_validity()
+
+        return GetEnergyMeterDisplayText(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DISPLAY_TEXT, (), '', 20, '8s 4s'))
+
+    def set_energy_meter_display_backlight(self, backlight):
+        r"""
+        Sets the backlight mode of the energy meter LCD. Only available with Iskra
+        WM3M4/WM3M4C energy meters.
+
+        * Off: The backlight is always off.
+        * On: The backlight is always on.
+        * Automatic: The backlight is turned on when an EV is charging or a button is
+          pressed and turned off 5 minutes after the last event (EV stops charging,
+          button press).
+
+        The default is Automatic.
+        """
+        self.check_validity()
+
+        backlight = int(backlight)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_ENERGY_METER_DISPLAY_BACKLIGHT, (backlight,), 'B', 0, '')
+
+    def get_energy_meter_display_backlight(self):
+        r"""
+        Returns the backlight mode as set by :func:`Set Energy Meter Display Backlight`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DISPLAY_BACKLIGHT, (), '', 9, 'B')
+
+    def set_plug_lock_configuration(self, enabled):
+        r"""
+        Enables or disables the Type 2 plug lock. The setting is persistent.
+
+        The plug lock is driven by an Industrial Quad Relay Bricklet 2.1 and an
+        Industrial Digital In 4 Bricklet 2.0 that are connected to the charger's
+        ESP32, not to the EVSE itself. Enabling is therefore only accepted while a
+        fresh hardware report is present, see :func:`Set Plug Lock Hardware State`.
+        Without one this function returns an invalid parameter error.
+
+        Enabling is also refused while the contactor is not confirmed to be open,
+        because the plug cannot already be locked at that moment and charging would
+        be stopped immediately. Stop the charging session first.
+
+        Disabling is refused while the plug still has to be held locked, that is
+        while a vehicle is connected or the contactor is not confirmed open.
+        Disconnect the vehicle first.
+
+        While the plug lock is enabled and the bricklets are missing or stop
+        reporting, charging is blocked with error state 6 (Plug Lock).
+
+        This is currently only supported on WARP4.
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_PLUG_LOCK_CONFIGURATION, (enabled,), '!', 0, '')
+
+    def get_plug_lock_configuration(self):
+        r"""
+        Returns the configuration as set by :func:`Set Plug Lock Configuration`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PLUG_LOCK_CONFIGURATION, (), '', 9, '!')
+
+    def set_plug_lock_hardware_state(self, present, lock_closed, lock_fault):
+        r"""
+        Reports the state of the plug lock hardware. The EVSE cannot see the
+        bricklets itself, so this has to be asserted from the outside.
+
+        *Present* means both bricklets were found. *Lock Closed* is the debounced
+        feedback input, not a conclusion drawn from a state machine: it means the
+        feedback contact currently says the plug is locked.
+
+        *Lock Fault* means an attempt to **lock** the plug failed. A failure to
+        *unlock* must not be reported here: a plug that is stuck locked is in the safe
+        state, and blocking charging over it would help nobody.
+
+        This call doubles as a heartbeat: the report goes stale after 5 seconds and
+        is then treated as "not present". Call it at least once per second while the
+        plug lock is in use.
+
+        At least one report must have arrived before
+        :func:`Set Plug Lock Configuration` will accept ``enabled`` = *true*.
+        """
+        self.check_validity()
+
+        present = bool(present)
+        lock_closed = bool(lock_closed)
+        lock_fault = bool(lock_fault)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_PLUG_LOCK_HARDWARE_STATE, (present, lock_closed, lock_fault), '! ! !', 0, '')
+
+    def get_plug_lock_state(self):
+        r"""
+        Returns the current state of the plug lock.
+
+        *Lock Wanted* is the EVSE's decision on whether the plug has to be locked
+        right now, and it is the input the charger's lock state machine acts on. It is
+        true while a vehicle is detected or while the contactor is not confirmed to be
+        open, so the plug is never released while the socket might still be live.
+
+        *Disabled* means the plug lock is not activated, or the EVSE is not hardware
+        version 4. *No Hardware* means the bricklets are absent or their report has
+        gone stale. *Idle* means the plug does not need to be locked, *Waiting* that it
+        does but is not confirmed locked yet, *Locked* that it is. *Fault Timeout*
+        means the plug did not lock in time and *Fault Lock* that the charger reported
+        a failed lock attempt.
+
+        Charging is blocked in *No Hardware*, *Fault Timeout* and *Fault Lock*, all
+        reported as error state 6.
+        """
+        self.check_validity()
+
+        return GetPlugLockState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PLUG_LOCK_STATE, (), '', 10, 'B !'))
 
     def get_spitfp_error_count(self):
         r"""
@@ -867,29 +1683,26 @@ class BrickletEVSEV2(Device):
 
     def get_all_energy_meter_values(self):
         r"""
-        TBD
+        Returns all values that the connected energy meter provides. The meaning of
+        the values depends on the energy meter type, see
+        :func:`Get Hardware Configuration`.
         """
-        values_length = 88
-
         with self.stream_lock:
             ret = self.get_all_energy_meter_values_low_level()
-
-            if ret.values_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
-                values_length = 0
-                values_out_of_sync = False
-                values_data = ()
-            else:
-                values_out_of_sync = ret.values_chunk_offset != 0
-                values_data = ret.values_chunk_data
+            values_length = ret.values_length
+            values_out_of_sync = ret.values_chunk_offset != 0
+            values_data = ret.values_chunk_data
 
             while not values_out_of_sync and len(values_data) < values_length:
                 ret = self.get_all_energy_meter_values_low_level()
+                values_length = ret.values_length
                 values_out_of_sync = ret.values_chunk_offset != len(values_data)
                 values_data += ret.values_chunk_data
 
             if values_out_of_sync: # discard remaining stream to bring it back in-sync
                 while ret.values_chunk_offset + 15 < values_length:
                     ret = self.get_all_energy_meter_values_low_level()
+                    values_length = ret.values_length
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Values stream is out-of-sync')
 

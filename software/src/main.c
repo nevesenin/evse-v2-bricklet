@@ -35,6 +35,7 @@
 #include "evse.h"
 #include "iec61851.h"
 #include "lock.h"
+#include "plug_lock.h"
 #include "led.h"
 #include "button.h"
 #include "adc.h"
@@ -60,6 +61,7 @@ int main(void) {
 	charging_slot_init();
 	iec61851_init();
 	lock_init();
+	plug_lock_init(); // Keep after evse_init(), the configuration is read from eeprom there
 	contactor_check_init();
 	led_init();
 	button_init();
@@ -78,6 +80,7 @@ int main(void) {
 		bootloader_tick();
 		communication_tick();
 		lock_tick();
+		plug_lock_tick(); // Keep before evse_tick(), iec61851_tick() reads plug_lock_has_fault()
 		contactor_check_tick();
 		led_tick();
 		button_tick();
